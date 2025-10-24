@@ -44,6 +44,36 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  int _selectedIndex = 0;
+
+  // 🔹 Daftar halaman (konten berbeda tiap tab)
+  final List<Widget> _pages = const [
+    Center(
+      child: Text(
+        '🏠 Ini Halaman Beranda',
+        style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.brown),
+      ),
+    ),
+    Center(
+      child: Text(
+        '🛍️ Ini Halaman Produk qii.Shop',
+        style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.brown),
+      ),
+    ),
+    Center(
+      child: Text(
+        '⚙️ Ini Halaman Pengaturan',
+        style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.brown),
+      ),
+    ),
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,7 +97,6 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
 
-      // 🧭 Drawer ditambahkan di sini:
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
@@ -76,9 +105,9 @@ class _MyHomePageState extends State<MyHomePage> {
               accountName: Text('Zaqi Maulana'),
               accountEmail: Text('qii@mu.shop'),
               currentAccountPicture: CircleAvatar(
-               backgroundImage: NetworkImage(
-                'https://prod.static9.net.au/fs/1f5a7072-3ee7-4235-b607-a12284d5dd87',
-               ),
+                backgroundImage: NetworkImage(
+                  'https://prod.static9.net.au/fs/1f5a7072-3ee7-4235-b607-a12284d5dd87',
+                ),
               ),
               decoration: BoxDecoration(
                 color: Color(0xFFFFC107),
@@ -88,8 +117,10 @@ class _MyHomePageState extends State<MyHomePage> {
               leading: const Icon(Icons.home),
               title: const Text('Beranda'),
               onTap: () {
-                Navigator.pop(context); // menutup drawer
-                print('Menu Beranda dipilih');
+                Navigator.pop(context);
+                setState(() {
+                  _selectedIndex = 0;
+                });
               },
             ),
             ListTile(
@@ -97,7 +128,9 @@ class _MyHomePageState extends State<MyHomePage> {
               title: const Text('Produk'),
               onTap: () {
                 Navigator.pop(context);
-                print('Menu Produk dipilih');
+                setState(() {
+                  _selectedIndex = 1;
+                });
               },
             ),
             ListTile(
@@ -105,7 +138,9 @@ class _MyHomePageState extends State<MyHomePage> {
               title: const Text('Pengaturan'),
               onTap: () {
                 Navigator.pop(context);
-                print('Menu Pengaturan dipilih');
+                setState(() {
+                  _selectedIndex = 2;
+                });
               },
             ),
             const Divider(),
@@ -121,20 +156,38 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
 
-      body: const Center(
-        child: Text(
-          'Halo, ini halaman utama saya!',
-          style: TextStyle(
-            fontSize: 22,
-            color: Colors.brown,
-            fontWeight: FontWeight.w600,
+      // 🧭 Konten utama berubah sesuai tab
+      body: _pages[_selectedIndex],
+
+      // 🔹 Bottom Navigation Bar
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        backgroundColor: Colors.white,
+        selectedItemColor: Colors.amber[800],
+        unselectedItemColor: Colors.grey,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Beranda',
           ),
-        ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.shopping_bag),
+            label: 'Produk',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Pengaturan',
+          ),
+        ],
       ),
 
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           print('Floating Action Button ditekan');
+          setState(() {
+            _selectedIndex = 0; // kembali ke tab Beranda
+          });
         },
         backgroundColor: Colors.amber,
         tooltip: 'Kembali ke Home',
